@@ -3,9 +3,9 @@ Red creates [Redmine](http://www.redmine.org/) issues from the command line.
 
 0.1 (c) 2009 Dave Nolan
 
-[textgoeshere.org.uk](textgoeshere.org.uk)
+[http://textgoeshere.org.uk](http://textgoeshere.org.uk)
 
-[github.com/textgoeshere/redcmd](github.com/textgoeshere/redcmd)
+[http://github.com/textgoeshere/redcmd](http://github.com/textgoeshere/redcmd)
 
 Released under MIT license
 ==========================
