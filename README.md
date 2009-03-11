@@ -1,4 +1,5 @@
 Red creates Redmine (http://www.redmine.org/) issues from the command line.
+
 0.1 (c) 2009 Dave Nolan textgoeshere.org.uk, github.com/textgoeshere/redcmd
 
 Released under MIT license
@@ -34,12 +35,12 @@ Command line arguments override settings in the configuration file, which overri
 An example configuration file
 =============================
 
-   username: dave
-   password: d4ve
-   url: http://www.myredmineinstance.com
-   project: redcmd
-   tracker: bug
-   priorty: normal   
+    username: dave
+    password: d4ve
+    url: http://www.myredmineinstance.com
+    project: redcmd
+    tracker: bug
+    priorty: normal   
 
 I recommend creating a configuration file per-project, and sticking it in your path.
 
