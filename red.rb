@@ -1,4 +1,4 @@
-VER = "0.1 (c) 2009 Dave Nolan textgoeshere.org.uk, github.com/textgoeshere/redcmd"
+VER = "0.2 (c) 2009 Dave Nolan textgoeshere.org.uk, github.com/textgoeshere/redcmd"
 BANNER =<<-EOS
 Red creates Redmine (http://www.redmine.org/) issues from the command line.
 
@@ -64,11 +64,11 @@ module Textgoeshere
   class Red
     SELECTS = %w{priority tracker category assigned_to status}
     
-    def initialize(opts)
+    def initialize(command, opts)
       @opts = opts
       @mech  = WWW::Mechanize.new
       login
-      create_issue
+      send(command)
     end
     
     private
@@ -83,7 +83,7 @@ module Textgoeshere
       catch_redmine_errors
     end
     
-    def create_issue
+    def add
       @mech.get new_issue_url
       @mech.page.form_with(:action => create_issue_action) do |f|
         SELECTS.each do |name|
@@ -102,10 +102,30 @@ module Textgoeshere
       end
     end
     
+    def list
+      @mech.get(list_issues_url)
+      issues = @mech.page.parser.xpath('//table[@class="list issues"]/tbody//tr')
+      if issues.empty?
+        puts "No issues found at #{list_issues_url}"
+      else
+        @opts[:number].times do |i|
+          issue = issues[i]
+          break unless issue
+          subject = issue.xpath('td[@class="subject"]/a').inner_html
+          puts subject
+        end
+      end
+    end
+    
     def login_action; '/login'; end
-    def login_url; "#{@opts[:url]}#{login_action}"; end 
+    def login_url; "#{@opts[:url]}#{login_action}"; end
+      
     def create_issue_action; "/projects/#{@opts[:project]}/issues/new"; end
     def new_issue_url; "#{@opts[:url]}#{create_issue_action}"; end
+    def list_issues_url
+      params = @opts[:query_id] ? "?query_id=#{@opts[:query_id]}" : "" 
+      "#{@opts[:url]}/projects/#{@opts[:project]}/issues#{params}"
+    end
       
     def catch_redmine_errors
       error_flash = @mech.page.search('.flash.error')[0]
@@ -114,23 +134,43 @@ module Textgoeshere
   end
 end
 
-# NOTE: Trollop's default default for boolean values is false, not nil, so if extending to include boolean options ensure you explicity set :default => nil   
-opts = Trollop::options do
+# NOTE: Trollop's default default for boolean values is false, not nil, so if extending to include boolean options ensure you explicity set :default => nil
+
+COMMANDS = %w(add list)
+
+global_options = Trollop::options do
   banner BANNER
-  opt :subject, "Issue subject (title). This must be wrapped in inverted commas like this: \"My new feature\".", 
-          :type => String, :required => true
-  opt :tracker,     "Tracker (bug, feature etc.)",  :type => String
-  opt :project,     "Project identifier",           :type => String
-  opt :assigned_to, "Assigned to",                  :type => String
-  opt :priority,    "Priority",                     :type => String
-  opt :status,      "Status",                       :type => String, :short => 'x'
-  opt :category,    "Category",                     :type => String
   opt :username,    "Username",                     :type => String, :short => 'u'
   opt :password,    "Password",                     :type => String, :short => 'p'
   opt :url,         "Url to redmine",               :type => String
-  opt :filename, "Configuration file, YAML format, specifying default options.", 
+  opt :project,     "Project identifier",           :type => String
+  opt :filename,    "Configuration file, YAML format, specifying default options.", 
           :type => String, :default => ".red"
   version VER
+  stop_on COMMANDS
 end
+
+command = ARGV.shift
+command_options = case command 
+  when "add"
+    Trollop::options do
+      opt :subject, "Issue subject (title). This must be wrapped in inverted commas like this: \"My new feature\".", 
+              :type => String, :required => true
+      opt :tracker,     "Tracker (bug, feature etc.)",  :type => String
+      opt :assigned_to, "Assigned to",                  :type => String
+      opt :priority,    "Priority",                     :type => String
+      opt :status,      "Status",                       :type => String, :short => 'x'
+      opt :category,    "Category",                     :type => String
+    end
+  when "list"
+    Trollop::options do
+      opt :number,     "Number of issues to display",   :type => Integer, :default => 5
+      opt :query_id,   "Optional custom query id",      :type => Integer
+    end
+  else
+    Trollop::die "Uknown command #{command}"
+end
+
+opts = global_options.merge(command_options)
 YAML::load_file(opts[:filename]).each_pair { |name, default| opts[name.to_sym] ||= default } if File.exist?(opts[:filename])
-Textgoeshere::Red.new(opts)
+Textgoeshere::Red.new(command, opts)
