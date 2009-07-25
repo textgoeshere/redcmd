@@ -86,7 +86,7 @@ module Textgoeshere
     def add
       @mech.get new_issue_url
       @mech.page.form_with(:action => create_issue_action) do |f|
-        SELECTS.each do |name|
+		SELECTS.each do |name|
           value = @opts[name.to_sym]
           unless value.nil?
             field = f.field_with(:name => "issue[#{name}_id]")
@@ -96,6 +96,11 @@ module Textgoeshere
         end
         f.field_with(:name => 'issue[subject]').value = @opts[:subject]
         f.field_with(:name => 'issue[description]').value = @opts[:description]
+		Integer i = 1
+		@opts[:file].each do |file|
+			f.file_uploads_with(:name => "attachments[#{i.to_s()}][file]").first.file_name = file
+			i+=1
+		end
         f.click_button
         catch_redmine_errors
         puts "Created #{@mech.page.search('h2').text}: #{@opts[:subject]}"
@@ -162,6 +167,7 @@ command_options = case command
       opt :status,      "Status",                       :type => String, :short => 'x'
       opt :category,    "Category",                     :type => String
 	  opt :description, "Description",                  :type => String
+	  opt :file, 		"File",                  		:type => String, :multi => true
     end
   when "list"
     Trollop::options do
