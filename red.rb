@@ -95,7 +95,7 @@ module Textgoeshere
           end
         end
         f.field_with(:name => 'issue[subject]').value = @opts[:subject]
-        f.field_with(:name => 'issue[description]').value = @opts[:subject]
+        f.field_with(:name => 'issue[description]').value = @opts[:description]
         f.click_button
         catch_redmine_errors
         puts "Created #{@mech.page.search('h2').text}: #{@opts[:subject]}"
@@ -161,6 +161,7 @@ command_options = case command
       opt :priority,    "Priority",                     :type => String
       opt :status,      "Status",                       :type => String, :short => 'x'
       opt :category,    "Category",                     :type => String
+	  opt :description, "Description",                  :type => String
     end
   when "list"
     Trollop::options do
