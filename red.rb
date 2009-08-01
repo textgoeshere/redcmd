@@ -1,29 +1,9 @@
-VER = "0.2 (c) 2009 Dave Nolan textgoeshere.org.uk, github.com/textgoeshere/redcmd"
+VER = "0.3 (c) 2009 Dave Nolan textgoeshere.org.uk, github.com/textgoeshere/redcmd"
 BANNER =<<-EOS
 Red creates Redmine (http://www.redmine.org/) issues from the command line.
 
-==Released under MIT license==
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
-
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
 ==Example==
-red -s "Twitter integration FTW!!" -t feature -p cashprinter -r high -a "Some poor sod"
+red add -s "Twitter integration FTW!!" -d "An optional description" -t feature -p cashprinter -r high -a "Some poor sod"
 # => "Created Feature #999 Twitter integration FTW!!!"
 
 Command line arguments override settings in the configuration file, which override Redmine form defaults.
@@ -95,7 +75,10 @@ module Textgoeshere
           end
         end
         f.field_with(:name => 'issue[subject]').value = @opts[:subject]
-        f.field_with(:name => 'issue[description]').value = @opts[:subject]
+        f.field_with(:name => 'issue[description]').value = @opts[:description] || @opts[:subject]
+        @opts[:file].each_with_index do |file, i|
+          f.file_uploads_with(:name => "attachments[#{i.to_s()}][file]").first.file_name = file
+        end
         f.click_button
         catch_redmine_errors
         puts "Created #{@mech.page.search('h2').text}: #{@opts[:subject]}"
@@ -156,11 +139,13 @@ command_options = case command
     Trollop::options do
       opt :subject, "Issue subject (title). This must be wrapped in inverted commas like this: \"My new feature\".", 
               :type => String, :required => true
+      opt :description, "Description",                  :type => String
       opt :tracker,     "Tracker (bug, feature etc.)",  :type => String
       opt :assigned_to, "Assigned to",                  :type => String
       opt :priority,    "Priority",                     :type => String
       opt :status,      "Status",                       :type => String, :short => 'x'
       opt :category,    "Category",                     :type => String
+      opt :file, 		    "File",                         :type => String, :multi => true
     end
   when "list"
     Trollop::options do

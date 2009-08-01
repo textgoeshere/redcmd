@@ -1,7 +1,7 @@
 Red creates [Redmine](http://www.redmine.org/) issues from the command line.
 ============================================================================
 
-0.1 (c) 2009 Dave Nolan
+0.3 (c) 2009 Dave Nolan
 
 [http://textgoeshere.org.uk](http://textgoeshere.org.uk)
 
@@ -32,7 +32,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 Example
 =======
 
-    red -s "Twitter integration FTW!!" -t feature -p cashprinter -r high -a "Some poor sod"
+    red add -s "Twitter integration FTW!!" -d "description text" -t feature -p cashprinter -r high -a "Some poor sod" -f /path/to/attachment
     # => "Created Feature #999 Twitter integration FTW!!!"
 
 Command line arguments override settings in the configuration file, which override Redmine form defaults.
