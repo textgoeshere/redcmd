@@ -32,8 +32,20 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 Example
 =======
 
-    red add -s "Twitter integration FTW!!" -d "description text" -t feature -p cashprinter -r high -a "Some poor sod" -f /path/to/attachment
-    # => "Created Feature #999 Twitter integration FTW!!!"
+Add an issue:
+
+    red add -s "New feature" -d "Some longer description text" -t feature -p cashprinter -r high -a "Dave" -f /path/to/attachment
+    # =>
+    "Created Feature #999 New feature"
+       
+List some issues (you can reference a Redmine custom query here):
+    
+    red list 3
+    # =>
+    Fix widget
+    Design thingy
+    Document Windows 95 compatibility issues
+    
 
 Command line arguments override settings in the configuration file, which override Redmine form defaults.
 
