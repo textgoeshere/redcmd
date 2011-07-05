@@ -1,3 +1,4 @@
+#!/usr/bin/env ruby
 VER = "0.3 (c) 2009 Dave Nolan textgoeshere.org.uk, github.com/textgoeshere/redcmd"
 BANNER =<<-EOS
 Red creates Redmine (http://www.redmine.org/) issues from the command line.
