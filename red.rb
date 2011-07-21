@@ -44,10 +44,12 @@ EOS
 begin
   require 'trollop'
   require 'mechanize'
+  require 'yaml'
 rescue LoadError
   require 'rubygems'
   require 'trollop'
   require 'mechanize'
+  require 'yaml'
 end
 
 module Textgoeshere
