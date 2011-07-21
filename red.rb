@@ -60,7 +60,7 @@ module Textgoeshere
     
     def initialize(command, opts)
       @opts = opts
-      @mech  = WWW::Mechanize.new
+      @mech  = Mechanize.new
       login
       send(command)
     end
