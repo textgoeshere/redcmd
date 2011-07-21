@@ -1,3 +1,4 @@
+#!/usr/bin/env ruby
 VER = "0.3 (c) 2009 Dave Nolan textgoeshere.org.uk, github.com/textgoeshere/redcmd"
 BANNER =<<-EOS
 Red creates Redmine (http://www.redmine.org/) issues from the command line.
@@ -43,10 +44,12 @@ EOS
 begin
   require 'trollop'
   require 'mechanize'
+  require 'yaml'
 rescue LoadError
   require 'rubygems'
   require 'trollop'
   require 'mechanize'
+  require 'yaml'
 end
 
 module Textgoeshere
@@ -57,7 +60,7 @@ module Textgoeshere
     
     def initialize(command, opts)
       @opts = opts
-      @mech  = WWW::Mechanize.new
+      @mech  = Mechanize.new
       login
       send(command)
     end
