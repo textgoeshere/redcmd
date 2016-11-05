@@ -1,5 +1,7 @@
 Red creates [Redmine](http://www.redmine.org/) issues from the command line.
-============================================================================
+
+NB: This library is no longer maintained.
+-----------------------------------------
 
 0.3 (c) 2009 Dave Nolan
 
